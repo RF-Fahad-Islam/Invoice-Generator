@@ -1,7 +1,7 @@
 # Invoice Generator
 
 A full-stack web application for generating invoices, built with FastAPI.
-
+<a href="https://ibb.co.com/D3Q765Z"><img src="https://i.ibb.co.com/ZyxhwW0/Opera-Snapshot-2025-10-08-161429-127-0-0-1.png" alt="Opera-Snapshot-2025-10-08-161429-127-0-0-1" border="0" width="100%" ></a>
 ## Tech Stack
 
 - Backend: FastAPI
