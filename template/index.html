@@ -143,13 +143,11 @@
                 return response.json(); // Parse the JSON response
             })
             .then(data => {
-                console.log(data)
                 if(data.file_name){
                     window.location.href = `${window.location.href}download/${data.file_name}`
                     document.getElementById("loader").style.display = 'none'
                     document.getElementById("error").innerHTML = 'File Success'
                     document.getElementById("error").style.color = 'green'
-
                     
                 } // Handle the successful response data
             })

@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Request,HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse,RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -8,6 +8,7 @@ import os
 from docxtpl import DocxTemplate
 from datetime import datetime
 import tempfile
+from typing import Annotated
 
 def generateInvoice(datas:dict):
     template = os.path.join(FILE_DIRECTORY, "invoice_template.docx")
@@ -73,3 +74,6 @@ async def download_file(filename: str):
         file_path,
         media_type="application/octet-stream"  # Generic binary data
     )
+
+def removejunk(file_name):
+    os.remove(os.path.join(FILE_DIRECTORY_2,file_name))
