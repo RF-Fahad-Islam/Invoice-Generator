@@ -36,8 +36,8 @@
                 <div class="itemRow" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                     <input required type="text" class="itemName item" placeholder="Item Name"
                         style="flex: 1; padding: 0.5rem;" aria-describedby="valid-helper">
-                        <input required type="text" class="itemDesc item" placeholder="Description"
-                            style="flex: 2; padding: 0.5rem;" aria-describedby="valid-helper">
+                    <input required type="text" class="itemDesc item" placeholder="Description"
+                        style="flex: 2; padding: 0.5rem;" aria-describedby="valid-helper">
                     <input required type="number" class="itemQty item" placeholder="Quantity"
                         style="flex: 1; padding: 0.5rem;" aria-describedby="valid-helper">
                     <input required type="number" class="itemPrice item" placeholder="Price"
@@ -50,14 +50,17 @@
 
         </article>
     </form>
-    <button aria-busy="true" id="loader" class="outline contrast" style="display: none; width: 80%; margin: auto;">Please wait…</button>
+    <button aria-busy="true" id="loader" class="outline contrast"
+        style="display: none; width: 80%; margin: auto;">Please wait…</button>
     <hr>
-<div class="group" style="width: 80%; margin: auto; display: flex; justify-content: space-between;">
+    <div class="group" style="width: 80%; margin: auto; display: flex; justify-content: space-between;">
 
-    <button id="newinvoice" class="contrast outline" onclick="history.go(0)" style="display: block; flex: 1; margin: auto;  padding: 20px;">New Invoice</button>
-    <button id="geninvoice" style="text-align: center; margin: 1rem; display: block; flex: 2; padding: 20px;">Generate
-        Invoice</button>
-</div>
+        <button id="newinvoice" class="contrast outline" onclick="history.go(0)"
+            style="display: block; flex: 1; margin: auto;  padding: 20px;">New Invoice</button>
+        <button id="geninvoice"
+            style="text-align: center; margin: 1rem; display: block; flex: 2; padding: 20px;">Generate
+            Invoice</button>
+    </div>
 </body>
 <script>
     let items = [];
@@ -90,7 +93,7 @@
                 item_desc: itemDesc,
                 item_qty: parseInt(itemQty),
                 item_price: parseFloat(itemPrice),
-                line_total : (parseFloat(itemPrice)*parseInt(itemQty))
+                line_total: (parseFloat(itemPrice) * parseInt(itemQty))
             }
             if (itemName.trim() != "" && itemDesc.trim() != "" && itemQty && itemPrice) {
                 items.push(obj)
@@ -109,9 +112,9 @@
         } else {
             document.getElementById("error").style.display = 'none'
             document.getElementById("loader").style.display = 'block'
-            const subtotalfunc = ()=> {
+            const subtotalfunc = () => {
                 let total = 0
-                for(item of items){
+                for (item of items) {
                     total += item.line_total
                 }
                 return total
@@ -121,41 +124,34 @@
             const dataToSend = {
                 company_name: document.getElementById('companyName').value,
                 bill_to: document.getElementById('billTo').value,
-                phone : document.getElementById('phone').value,
+                phone: document.getElementById('phone').value,
                 items: items,
                 subtotal: subtotal,
                 salestax: parseInt(document.getElementById('salestax').value),
-                total: ((1+parseFloat(document.getElementById('salestax').value))*subtotal).toFixed(2)
+                total: ((1 + parseFloat(document.getElementById('salestax').value)) * subtotal).toFixed(2)
             };
-            
+
             fetch(url, {
-                method: 'POST', // Specify the HTTP method
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json' // Indicate that the body is JSON
+                    'Content-Type': 'application/json'
+
                 },
-                body: JSON.stringify(dataToSend) // Convert the JavaScript object to a JSON string
+                body: JSON.stringify(dataToSend)
+            }).then(response => {
+                const filename = response.headers.get("filename");
+                return response.blob().then(blob => ({ blob, filename }));
             })
-            .then(response => {
-                if (!response.ok) {
-                    // Handle HTTP errors (e.g., 404, 500)
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json(); // Parse the JSON response
-            })
-            .then(data => {
-                if(data.file_name){
-                    window.location.href = `${window.location.href}download/${data.file_name}`
-                    document.getElementById("loader").style.display = 'none'
-                    document.getElementById("error").innerHTML = 'File Success'
-                    document.getElementById("error").style.color = 'green'
-                    
-                } // Handle the successful response data
-            })
-            .catch(error => {
-                document.getElementById("error").style.display = "block"
-                document.getElementById("error").innerText = "Some error ocurred in server"
-                document.getElementById("loader").innerHTML = 'Error Occured *_*'
-            });
+                .then(({ blob, filename }) => {
+                    // Create download link
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                })
+                .catch(err => console.error("Error:", err));
         }
     })
 </script>
